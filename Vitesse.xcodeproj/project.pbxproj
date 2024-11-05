@@ -6,14 +6,40 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		6F2CFA912CDAA264008F3B1B /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 6F2CFA902CDAA264008F3B1B /* README.md */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		6F2CFA8B2CDAA176008F3B1B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6F2CFA6A2CDAA140008F3B1B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6F2CFA712CDAA140008F3B1B;
+			remoteInfo = Vitesse;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		6F2CFA722CDAA140008F3B1B /* Vitesse.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Vitesse.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		6F2CFA872CDAA176008F3B1B /* VitesseTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VitesseTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		6F2CFA902CDAA264008F3B1B /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		6F2CFA742CDAA140008F3B1B /* Vitesse */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = Vitesse;
+			sourceTree = "<group>";
+		};
+		6F2CFA882CDAA176008F3B1B /* VitesseTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = VitesseTests;
+			sourceTree = "<group>";
+		};
+		6F2CFA942CDAA27E008F3B1B /* Docs */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Docs;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -26,13 +52,23 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		6F2CFA842CDAA176008F3B1B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		6F2CFA692CDAA140008F3B1B = {
 			isa = PBXGroup;
 			children = (
+				6F2CFA902CDAA264008F3B1B /* README.md */,
+				6F2CFA942CDAA27E008F3B1B /* Docs */,
 				6F2CFA742CDAA140008F3B1B /* Vitesse */,
+				6F2CFA882CDAA176008F3B1B /* VitesseTests */,
 				6F2CFA732CDAA140008F3B1B /* Products */,
 			);
 			sourceTree = "<group>";
@@ -41,6 +77,7 @@
 			isa = PBXGroup;
 			children = (
 				6F2CFA722CDAA140008F3B1B /* Vitesse.app */,
+				6F2CFA872CDAA176008F3B1B /* VitesseTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -55,10 +92,12 @@
 				6F2CFA6E2CDAA140008F3B1B /* Sources */,
 				6F2CFA6F2CDAA140008F3B1B /* Frameworks */,
 				6F2CFA702CDAA140008F3B1B /* Resources */,
+				6F2CFA992CDAA69E008F3B1B /* ShellScript */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				6F2CFA9B2CDAA7DD008F3B1B /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				6F2CFA742CDAA140008F3B1B /* Vitesse */,
@@ -69,6 +108,29 @@
 			productName = Vitesse;
 			productReference = 6F2CFA722CDAA140008F3B1B /* Vitesse.app */;
 			productType = "com.apple.product-type.application";
+		};
+		6F2CFA862CDAA176008F3B1B /* VitesseTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6F2CFA8D2CDAA176008F3B1B /* Build configuration list for PBXNativeTarget "VitesseTests" */;
+			buildPhases = (
+				6F2CFA832CDAA176008F3B1B /* Sources */,
+				6F2CFA842CDAA176008F3B1B /* Frameworks */,
+				6F2CFA852CDAA176008F3B1B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				6F2CFA8C2CDAA176008F3B1B /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				6F2CFA882CDAA176008F3B1B /* VitesseTests */,
+			);
+			name = VitesseTests;
+			packageProductDependencies = (
+			);
+			productName = VitesseTests;
+			productReference = 6F2CFA872CDAA176008F3B1B /* VitesseTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
 
@@ -83,6 +145,10 @@
 					6F2CFA712CDAA140008F3B1B = {
 						CreatedOnToolsVersion = 16.1;
 					};
+					6F2CFA862CDAA176008F3B1B = {
+						CreatedOnToolsVersion = 16.1;
+						TestTargetID = 6F2CFA712CDAA140008F3B1B;
+					};
 				};
 			};
 			buildConfigurationList = 6F2CFA6D2CDAA140008F3B1B /* Build configuration list for PBXProject "Vitesse" */;
@@ -94,12 +160,16 @@
 			);
 			mainGroup = 6F2CFA692CDAA140008F3B1B;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				6F2CFA982CDAA52B008F3B1B /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 6F2CFA732CDAA140008F3B1B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
 				6F2CFA712CDAA140008F3B1B /* Vitesse */,
+				6F2CFA862CDAA176008F3B1B /* VitesseTests */,
 			);
 		};
 /* End PBXProject section */
@@ -109,10 +179,39 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6F2CFA912CDAA264008F3B1B /* README.md in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6F2CFA852CDAA176008F3B1B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		6F2CFA992CDAA69E008F3B1B /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nif [[ \"$(uname -m)\" == arm64 ]]\nthen\n    export PATH=\"/opt/homebrew/bin:$PATH\"\nfi\n\nif command -v swiftlint >/dev/null 2>&1\nthen\n    swiftlint\nelse\n    echo \"warning: `swiftlint` command not found - See https://github.com/realm/SwiftLint#installation for installation instructions.\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		6F2CFA6E2CDAA140008F3B1B /* Sources */ = {
@@ -122,7 +221,26 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		6F2CFA832CDAA176008F3B1B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		6F2CFA8C2CDAA176008F3B1B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6F2CFA712CDAA140008F3B1B /* Vitesse */;
+			targetProxy = 6F2CFA8B2CDAA176008F3B1B /* PBXContainerItemProxy */;
+		};
+		6F2CFA9B2CDAA7DD008F3B1B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = 6F2CFA9A2CDAA7DD008F3B1B /* SwiftLintBuildToolPlugin */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		6F2CFA7E2CDAA141008F3B1B /* Debug */ = {
@@ -162,7 +280,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -225,7 +343,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -259,6 +377,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -287,6 +406,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -297,6 +417,40 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		6F2CFA8E2CDAA176008F3B1B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = fr.mathieudelepine.VitesseTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Vitesse.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Vitesse";
+			};
+			name = Debug;
+		};
+		6F2CFA8F2CDAA176008F3B1B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = fr.mathieudelepine.VitesseTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Vitesse.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Vitesse";
 			};
 			name = Release;
 		};
@@ -321,7 +475,35 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		6F2CFA8D2CDAA176008F3B1B /* Build configuration list for PBXNativeTarget "VitesseTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6F2CFA8E2CDAA176008F3B1B /* Debug */,
+				6F2CFA8F2CDAA176008F3B1B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		6F2CFA982CDAA52B008F3B1B /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SimplyDanny/SwiftLintPlugins";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.57.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		6F2CFA9A2CDAA7DD008F3B1B /* SwiftLintBuildToolPlugin */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6F2CFA982CDAA52B008F3B1B /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */;
+			productName = "plugin:SwiftLintBuildToolPlugin";
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 6F2CFA6A2CDAA140008F3B1B /* Project object */;
 }
