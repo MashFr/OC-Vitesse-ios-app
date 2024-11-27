@@ -8,61 +8,77 @@
 import SwiftUI
 
 struct LoginView: View {
-    @State private var email = ""
-    @State private var password = ""
+    @StateObject private var viewModel = LoginViewModel()
+
+    @Environment(\.horizontalSizeClass) private var sizeClass
 
     var body: some View {
         NavigationStack {
+            VStack(alignment: .center) {
+                TopView(title: "Login", details: "Welcome to Vitesse app")
 
-            VStack {
-                Text("Login")
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
+                Spacer()
 
-                TextField("Email", text: $email)
-                    .padding()
-                    .background(Color(.secondarySystemBackground))
-                    .cornerRadius(8)
-                    .keyboardType(.emailAddress)
-                    .autocapitalization(.none)
+                Form {
+                    EmailInputField(label: "Email/Username", placeholder: "", text: Binding(
+                        get: {
+                            viewModel.output.email
+                        }, set: { email in
+                            viewModel.input.updateEmail(email)
+                        })
+                    )
+                    .padding(.bottom, 14)
 
-                SecureField("Password", text: $password)
-                    .padding()
-                    .background(Color(.secondarySystemBackground))
-                    .cornerRadius(8)
+                    SecureInputField(label: "Password", placeholder: "", text: Binding(
+                        get: {
+                            viewModel.output.password
+                        }, set: { password in
+                            viewModel.input.updatePassword(password)
+                        })
+                    )
 
-                Button(action: handleSignIn) {
-                    Text("Sign In")
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.blue)
-                        .cornerRadius(8)
+                    if let errorMessage = viewModel.output.errorMessage {
+                        Text(errorMessage)
+                            .foregroundStyle(.red)
+                            .font(.caption)
+                            .padding(.bottom, 10)
+                    }
+
+                    Text("Forgot password?")
+                        .font(.caption)
+                        .padding(.bottom, 20)
+
+                    Button {
+                        Task {
+                            await viewModel.input.login()
+                        }
+                    } label: {
+                        if viewModel.output.isLoading {
+                            ProgressButton()
+                        } else {
+                            TextButton(title: "Sign In")
+                        }
+                    }.padding(.bottom, 14)
+                }
+                .formStyle(.columns)
+                .safeAreaPadding(.horizontal, sizeClass == .regular ? 200 : 30)
+
+                NavigationLink {
+                    RegisterView()
+                } label: {
+                    TextButton(title: "Register")
                 }
 
-                NavigationLink(
-                    destination: RegisterView(),
-                    label: {
-                        Text("Register")
-                            .font(.headline)
-                            .foregroundColor(.white)
-                            .padding()
-                            .background(.primary)
-                            .cornerRadius(8)
-                    }
-                )
-
+                Spacer()
             }
-            .padding()
+            .navigationDestination(isPresented: Binding(
+                get: { viewModel.output.isLoginSuccessful },
+                set: { _ in } // no need for setter here
+            )) {
+                CandidateListView()
+            }
         }
     }
-
-    // Validation et gestion de l'inscription
-    func handleSignIn() {
-        // Inscription réussie (à connecter avec une base de données ou un backend)
-        print("connexion réussie !")
-    }
-
 }
 
 #Preview {
