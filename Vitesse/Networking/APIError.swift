@@ -11,7 +11,6 @@ enum APIError: LocalizedError {
     case invalidResponse
     case httpError(statusCode: Int)
     case noData
-    case decodingError
     case unauthorized
 
     var errorDescription: String {
@@ -24,8 +23,6 @@ enum APIError: LocalizedError {
             return "HTTP error: \(statusCode)"
         case .noData:
             return "No data received from the server."
-        case .decodingError:
-            return "Failed to decode the data."
         case .unauthorized:
             return "You are not authorized to perform this action."
         }

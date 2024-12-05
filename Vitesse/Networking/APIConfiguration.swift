@@ -10,13 +10,6 @@ struct APIConstants {
     static let baseURL = "http://127.0.0.1:8080"
 }
 
-enum HTTPMethod: String {
-    case GET
-    case POST
-    case PUT
-    case DELETE
-}
-
 enum APIEndpoint {
     case checkAPI
     case authenticate
@@ -27,11 +20,12 @@ enum APIEndpoint {
     case updateCandidate(id: String)
     case deleteCandidate(id: String)
     case toggleFavoriteCandidate(id: String)
+    case custom(path: String)
 
     var path: String {
         switch self {
         case .checkAPI:
-            return "/"
+            return ""
         case .authenticate:
             return "/user/auth"
         case .register:
@@ -48,10 +42,27 @@ enum APIEndpoint {
             return "/candidate/\(id)"
         case .toggleFavoriteCandidate(let id):
             return "/candidate/\(id)/favorite"
+        case .custom(let path):
+            return path
         }
     }
 
     var url: URL? {
         return URL(string: APIConstants.baseURL + path)
     }
+}
+
+enum HTTPMethod: String {
+    case GET
+    case POST
+    case PUT
+    case DELETE
+}
+
+struct HTTPHeaders {
+   static func authorization(token: String) -> [String: String] {
+       return ["Authorization": "Bearer \(token)"]
+   }
+
+   static let jsonContentType = ["Content-Type": "application/json"]
 }
