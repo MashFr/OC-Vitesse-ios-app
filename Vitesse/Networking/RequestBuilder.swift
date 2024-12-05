@@ -6,8 +6,10 @@
 //
 import Foundation
 
+/// A utility struct responsible for building network requests.
 struct RequestBuilder {
 
+    /// Builds a `URLRequest` based on the provided parameters, including the endpoint, HTTP method, body, and headers.
     static func buildRequest(
         endpoint: APIEndpoint,
         method: HTTPMethod,

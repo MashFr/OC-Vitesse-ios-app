@@ -7,7 +7,7 @@
 import Foundation
 
 extension Candidate {
-    // Initialisation avec des valeurs par défaut
+
     init(firstName: String,
          id: UUID = UUID(),
          lastName: String,

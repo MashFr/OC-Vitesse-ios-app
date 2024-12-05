@@ -6,6 +6,7 @@
 //
 import Foundation
 
+/// A service that handles API requests, including fetching decodable data or sending requests without a response body.
 struct APIService {
     private let session: URLSession
 
@@ -13,7 +14,7 @@ struct APIService {
         self.session = session
     }
 
-    // Fonction pour les requêtes avec un retour décodable
+    /// A function to perform a network request that returns a decodable response.
     func fetchDecodable<T: Decodable>(
         endpoint: APIEndpoint,
         method: HTTPMethod,
@@ -34,7 +35,7 @@ struct APIService {
         }
     }
 
-    // Fonction pour les requêtes sans retour
+    /// A function to perform a network request that does not return any data.
     func fetch(
         endpoint: APIEndpoint,
         method: HTTPMethod,
@@ -55,13 +56,13 @@ struct APIService {
         }
     }
 
-    // Exécution des requêtes avec un retour décodable
+    /// Executes a network request that returns a decodable response.
     private func executeRequestWithDecoding<T: Decodable>(
         _ request: URLRequest,
         completion: @escaping (Result<T, Error>) -> Void
     ) {
         session.dataTask(with: request) { data, response, error in
-            // Gestion des erreurs réseaux
+            // Handle network errors
             if let error = error {
                 completion(.failure(error))
                 return
@@ -82,7 +83,7 @@ struct APIService {
                 return
             }
 
-            // Décodage du JSON en type T
+            // Attempt to decode the response data into the specified type
             do {
                 let decodedData = try JSONDecoder().decode(T.self, from: data)
                 completion(.success(decodedData))
@@ -92,12 +93,13 @@ struct APIService {
         }.resume()
     }
 
-    // Exécution des requêtes sans décodage
+    /// Executes a network request without expecting a decodable response.
     private func executeRequest(
         _ request: URLRequest,
         completion: @escaping (Result<Void, Error>) -> Void
     ) {
         session.dataTask(with: request) { _, response, error in
+            // Handle network errors
             if let error = error {
                 completion(.failure(error))
                 return
@@ -113,7 +115,7 @@ struct APIService {
                 return
             }
 
-            // Si tout est ok, on retourne un succès sans données
+            // If everything is successful, return success with no data
             completion(.success(Void()))
         }.resume()
     }

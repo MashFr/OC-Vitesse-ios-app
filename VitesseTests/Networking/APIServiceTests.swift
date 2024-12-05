@@ -171,7 +171,6 @@ class APIServiceTests: XCTestCase {
             case .success:
                 XCTFail("Expected failure but got success")
             case .failure(let error):
-                // Vérifier le type d'erreur et son contenu
                 if let apiError = error as? APIError, case let .httpError(statusCode) = apiError {
                     XCTAssertEqual(statusCode, expectedStatusCode)
                 } else {
@@ -210,7 +209,6 @@ class APIServiceTests: XCTestCase {
             case .success:
                 XCTFail("Expected failure but got success")
             case .failure(let error):
-                // Vérifier le type d'erreur
                 if let apiError = error as? APIError, case .noData = apiError {
                     XCTAssertTrue(true, "Error is of type APIError.noData")
                 } else {
@@ -227,7 +225,6 @@ class APIServiceTests: XCTestCase {
         // Given
         let expectedEndpoint = APIEndpoint.checkAPI
 
-        // On fournit des données invalides pour le modèle `TestModel`
         let invalidJSONData = Data("""
         { "invalidKey": "invalidValue" }
         """.utf8)
@@ -254,14 +251,12 @@ class APIServiceTests: XCTestCase {
             case .success:
                 XCTFail("Expected failure but got success")
             case .failure(let error):
-                // Vérification que l'erreur est bien une erreur de décodage JSON
                 guard let decodingError = error as? DecodingError else {
                     XCTFail("Expected DecodingError but got \(error)")
                     expectation.fulfill()
                     return
                 }
 
-                // Vérification supplémentaire sur le type d'erreur de décodage
                 switch decodingError {
                 case .typeMismatch, .valueNotFound, .keyNotFound, .dataCorrupted:
                     XCTAssertTrue(true, "Error is a valid DecodingError: \(decodingError)")
@@ -300,7 +295,7 @@ class APIServiceTests: XCTestCase {
             // Then
             switch result {
             case .success:
-                XCTAssertTrue(true) // Success as expected
+                XCTAssertTrue(true)
             case .failure(let error):
                 XCTFail("Expected success but got error: \(error)")
             }
@@ -331,7 +326,6 @@ class APIServiceTests: XCTestCase {
             case .success:
                 XCTFail("Expected failure but got success")
             case .failure(let error):
-                // Vérification que l'erreur est bien un NSError et correspond à ce qu'on a simulé
                 XCTAssertEqual((error as NSError).domain, nsError.domain)
                 XCTAssertEqual((error as NSError).code, nsError.code)
                 XCTAssertEqual((error as NSError).localizedDescription, nsError.localizedDescription)
@@ -361,7 +355,6 @@ class APIServiceTests: XCTestCase {
             case .success:
                 XCTFail("Expected failure but got success")
             case .failure(let error):
-                // Vérifier le type d'erreur
                 if let apiError = error as? APIError, case .invalidResponse = apiError {
                     XCTAssertTrue(true, "Error is of type APIError.invalidResponse")
                 } else {
@@ -401,7 +394,6 @@ class APIServiceTests: XCTestCase {
             case .success:
                 XCTFail("Expected failure but got success")
             case .failure(let error):
-                // Vérifier le type d'erreur et son contenu
                 if let apiError = error as? APIError, case let .httpError(statusCode) = apiError {
                     XCTAssertEqual(statusCode, expectedStatusCode)
                 } else {
