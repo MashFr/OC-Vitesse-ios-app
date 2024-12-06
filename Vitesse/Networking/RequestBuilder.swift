@@ -30,6 +30,7 @@ struct RequestBuilder {
                 allHeaders[key] = value
             }
         }
+        // Add headers to the request
         allHeaders.forEach { request.setValue($0.value, forHTTPHeaderField: $0.key) }
 
         if let body = body {

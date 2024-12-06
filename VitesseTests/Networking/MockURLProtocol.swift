@@ -14,8 +14,10 @@ struct MockResponse {
     let error: Error?
 }
 
+/// A custom URLProtocol used for mocking network requests in unit tests.
 class MockURLProtocol: URLProtocol {
-    // through this closure that we will define the mocked data that we want the call to return
+    /// A closure that provides the mocked response for a given request.
+    /// This is used to define the mock data that should be returned when a request is made.
     static var requestHandler: ((URLRequest) throws -> MockResponse)?
 
     // we want MockURLProtocol to intercept all the requests made by a URLSession
@@ -28,6 +30,7 @@ class MockURLProtocol: URLProtocol {
     }
 
     override func startLoading() {
+        // Ensure that the request handler is set
         guard let handler = MockURLProtocol.requestHandler else {
             let error = NSError(
                 domain: "MockURLProtocol",
@@ -40,19 +43,20 @@ class MockURLProtocol: URLProtocol {
 
         // Mock the response and data from the handler and send it to URLSession
         do {
+            // Fetch the mock response using the provided handler
             let mockResponse = try handler(request)
 
-            // We have a mock response specified so return it.
+            // If a mock HTTP response is provided, send it to the client
             if let response = mockResponse.response {
                 self.client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
             }
 
-            // We have mocked data specified so return it.
+            // If mock data is provided, load it into the client
             if let data = mockResponse.data {
                 self.client?.urlProtocol(self, didLoad: data)
             }
 
-            // We have a mocked error so return it.
+            // If a mock error is provided, send it to the client
             if let error = mockResponse.error {
                 self.client?.urlProtocol(self, didFailWithError: error)
             }

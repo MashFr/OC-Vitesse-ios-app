@@ -30,6 +30,7 @@ enum APIEndpoint {
             return "/user/auth"
         case .register:
             return "/user/register"
+        // todo: candidateBase
         case .getCandidates:
             return "/candidate"
         case .getCandidateDetail(let id):
@@ -60,9 +61,30 @@ enum HTTPMethod: String {
 }
 
 struct HTTPHeaders {
-   static func authorization(token: String) -> [String: String] {
-       return ["Authorization": "Bearer \(token)"]
-   }
+    let header: [String: String] = [:]
 
-   static let jsonContentType = ["Content-Type": "application/json"]
+    enum ContentType: String {
+        case json = "application/json"
+        case xml = "application/xml"
+        case formUrlEncoded = "application/x-www-form-urlencoded"
+        case plainText = "text/plain"
+
+        var contentTypeHeader: [String: String] {
+            ["Content-Type": self.rawValue]
+        }
+    }
+
+    enum Accept: String {
+        case json = "application/json"
+        case xml = "application/xml"
+        case html = "text/html"
+
+        var acceptHeader: [String: String] {
+            ["Accept": self.rawValue]
+        }
+    }
+
+    static func addAuthorization(token: String) -> [String: String] {
+       return ["Authorization": "Bearer \(token)"]
+    }
 }

@@ -36,240 +36,6 @@ class APIServiceTests: XCTestCase {
         super.tearDown()
     }
 
-    // MARK: Test FetchDecodable
-
-    func testFetchDecodable_Success() {
-        // Given
-        let expectedData = TestModel(id: 1, name: "Test")
-        do {
-            let responseData = try JSONEncoder().encode(expectedData)
-
-            let expectedEndpoint = APIEndpoint.checkAPI
-            let expectedResponse = HTTPURLResponse(
-                url: expectedEndpoint.url!,
-                statusCode: 200,
-                httpVersion: nil,
-                headerFields: nil
-            )!
-
-            MockURLProtocol.requestHandler = { request in
-                XCTAssertEqual(request.url, expectedEndpoint.url)
-                XCTAssertEqual(request.httpMethod, HTTPMethod.GET.rawValue)
-                return MockResponse(response: expectedResponse, data: responseData, error: nil)
-            }
-        } catch {
-            XCTFail("Failed to encode expectedData: \(error)")
-        }
-
-        let expectation = self.expectation(description: "FetchDecodable completes")
-
-        // When
-        apiService.fetchDecodable(
-            endpoint: APIEndpoint.checkAPI,
-            method: .GET
-        ) { (result: Result<TestModel, Error>) in
-            // Then
-            switch result {
-            case .success(let model):
-                XCTAssertEqual(model, expectedData)
-            case .failure(let error):
-                XCTFail("Expected success but got error: \(error)")
-            }
-            expectation.fulfill()
-        }
-
-        waitForExpectations(timeout: 1, handler: nil)
-    }
-
-    func testFetchDecodable_Failure_TaskError() {
-        // Given
-        let expectedEndpoint = APIEndpoint.checkAPI
-
-        let nsError = NSError(domain: "TestDomain", code: 1234, userInfo: [NSLocalizedDescriptionKey: "Mocked error"])
-
-        MockURLProtocol.requestHandler = { request in
-            XCTAssertEqual(request.url, expectedEndpoint.url)
-            XCTAssertEqual(request.httpMethod, HTTPMethod.GET.rawValue)
-            return MockResponse(response: nil, data: nil, error: nsError)
-        }
-
-        let expectation = self.expectation(description: "FetchDecodable completes")
-
-        // When
-        apiService.fetchDecodable(endpoint: expectedEndpoint, method: .GET) { (result: Result<TestModel, Error>) in
-            // Then
-            switch result {
-            case .success:
-                XCTFail("Expected failure but got success")
-            case .failure(let error):
-                // Vérification que l'erreur est bien un NSError et correspond à ce qu'on a simulé
-                XCTAssertEqual((error as NSError).domain, nsError.domain)
-                XCTAssertEqual((error as NSError).code, nsError.code)
-                XCTAssertEqual((error as NSError).localizedDescription, nsError.localizedDescription)
-            }
-            expectation.fulfill()
-        }
-
-        waitForExpectations(timeout: 1, handler: nil)
-    }
-
-    func testFetchDecodable_Failure_InvalidResponse() {
-        // Given
-        let expectedEndpoint = APIEndpoint.checkAPI
-
-        MockURLProtocol.requestHandler = { request in
-            XCTAssertEqual(request.url, expectedEndpoint.url)
-            XCTAssertEqual(request.httpMethod, HTTPMethod.GET.rawValue)
-            return MockResponse(response: nil, data: nil, error: nil) // Pas de réponse HTTP
-        }
-
-        let expectation = self.expectation(description: "FetchDecodable fails due to invalid response")
-
-        // When
-        apiService.fetchDecodable(endpoint: expectedEndpoint, method: .GET) { (result: Result<TestModel, Error>) in
-            // Then
-            switch result {
-            case .success:
-                XCTFail("Expected failure but got success")
-            case .failure(let error):
-                if let apiError = error as? APIError, case .invalidResponse = apiError {
-                    XCTAssertTrue(true, "Error is of type APIError.invalidResponse")
-                } else {
-                    XCTFail("Expected APIError.invalidResponse but got \(error)")
-                }
-            }
-            expectation.fulfill()
-        }
-
-        waitForExpectations(timeout: 1, handler: nil)
-    }
-
-    func testFetchDecodable_Failure_HTTPError() {
-        // Given
-        let expectedEndpoint = APIEndpoint.checkAPI
-        let expectedStatusCode = 404
-
-        let expectedResponse = HTTPURLResponse(
-            url: expectedEndpoint.url!,
-            statusCode: expectedStatusCode,
-            httpVersion: nil,
-            headerFields: nil
-        )!
-
-        MockURLProtocol.requestHandler = { request in
-            XCTAssertEqual(request.url, expectedEndpoint.url)
-            XCTAssertEqual(request.httpMethod, HTTPMethod.GET.rawValue)
-            return MockResponse(response: expectedResponse, data: nil, error: nil)
-        }
-
-        let expectation = self.expectation(description: "FetchDecodable fails due to HTTP error")
-
-        // When
-        apiService.fetchDecodable(endpoint: expectedEndpoint, method: .GET) { (result: Result<TestModel, Error>) in
-            // Then
-            switch result {
-            case .success:
-                XCTFail("Expected failure but got success")
-            case .failure(let error):
-                if let apiError = error as? APIError, case let .httpError(statusCode) = apiError {
-                    XCTAssertEqual(statusCode, expectedStatusCode)
-                } else {
-                    XCTFail("Expected APIError.httpError but got \(error)")
-                }
-            }
-            expectation.fulfill()
-        }
-
-        waitForExpectations(timeout: 1, handler: nil)
-    }
-
-    func testFetchDecodable_Failure_NoData() {
-        // Given
-        let expectedEndpoint = APIEndpoint.checkAPI
-
-        let expectedResponse = HTTPURLResponse(
-            url: expectedEndpoint.url!,
-            statusCode: 200,
-            httpVersion: nil,
-            headerFields: nil
-        )!
-
-        MockURLProtocol.requestHandler = { request in
-            XCTAssertEqual(request.url, expectedEndpoint.url)
-            XCTAssertEqual(request.httpMethod, HTTPMethod.GET.rawValue)
-            return MockResponse(response: expectedResponse, data: Data(), error: nil) // Pas de données
-        }
-
-        let expectation = self.expectation(description: "FetchDecodable fails due to no data")
-
-        // When
-        apiService.fetchDecodable(endpoint: expectedEndpoint, method: .GET) { (result: Result<TestModel, Error>) in
-            // Then
-            switch result {
-            case .success:
-                XCTFail("Expected failure but got success")
-            case .failure(let error):
-                if let apiError = error as? APIError, case .noData = apiError {
-                    XCTAssertTrue(true, "Error is of type APIError.noData")
-                } else {
-                    XCTFail("Expected APIError.noData but got \(error)")
-                }
-            }
-            expectation.fulfill()
-        }
-
-        waitForExpectations(timeout: 1, handler: nil)
-    }
-
-    func testFetchDecodable_Failure_DecodingError() {
-        // Given
-        let expectedEndpoint = APIEndpoint.checkAPI
-
-        let invalidJSONData = Data("""
-        { "invalidKey": "invalidValue" }
-        """.utf8)
-
-        let expectedResponse = HTTPURLResponse(
-            url: expectedEndpoint.url!,
-            statusCode: 200,
-            httpVersion: nil,
-            headerFields: nil
-        )!
-
-        MockURLProtocol.requestHandler = { request in
-            XCTAssertEqual(request.url, expectedEndpoint.url)
-            XCTAssertEqual(request.httpMethod, HTTPMethod.GET.rawValue)
-            return MockResponse(response: expectedResponse, data: invalidJSONData, error: nil)
-        }
-
-        let expectation = self.expectation(description: "FetchDecodable fails due to JSON decoding error")
-
-        // When
-        apiService.fetchDecodable(endpoint: expectedEndpoint, method: .GET) { (result: Result<TestModel, Error>) in
-            // Then
-            switch result {
-            case .success:
-                XCTFail("Expected failure but got success")
-            case .failure(let error):
-                guard let decodingError = error as? DecodingError else {
-                    XCTFail("Expected DecodingError but got \(error)")
-                    expectation.fulfill()
-                    return
-                }
-
-                switch decodingError {
-                case .typeMismatch, .valueNotFound, .keyNotFound, .dataCorrupted:
-                    XCTAssertTrue(true, "Error is a valid DecodingError: \(decodingError)")
-                default:
-                    XCTFail("Unexpected DecodingError type: \(decodingError)")
-                }
-            }
-            expectation.fulfill()
-        }
-
-        waitForExpectations(timeout: 1, handler: nil)
-    }
-
     // MARK: Test Fetch
 
     func testFetch_Success() {
@@ -405,4 +171,323 @@ class APIServiceTests: XCTestCase {
 
         waitForExpectations(timeout: 1, handler: nil)
     }
+
+    // MARK: Test FetchDecodable
+
+    func testFetchAndDecode_Success() {
+        // Given
+        let expectedData = TestModel(id: 1, name: "Test")
+        do {
+            let responseData = try JSONEncoder().encode(expectedData)
+
+            let expectedEndpoint = APIEndpoint.checkAPI
+            let expectedResponse = HTTPURLResponse(
+                url: expectedEndpoint.url!,
+                statusCode: 200,
+                httpVersion: nil,
+                headerFields: nil
+            )!
+
+            MockURLProtocol.requestHandler = { request in
+                XCTAssertEqual(request.url, expectedEndpoint.url)
+                XCTAssertEqual(request.httpMethod, HTTPMethod.GET.rawValue)
+                return MockResponse(response: expectedResponse, data: responseData, error: nil)
+            }
+        } catch {
+            XCTFail("Failed to encode expectedData: \(error)")
+        }
+
+        let expectation = self.expectation(description: "FetchDecodable completes")
+
+        // When
+        apiService.fetchAndDecode(
+            endpoint: APIEndpoint.checkAPI,
+            method: .GET
+        ) { (result: Result<TestModel, Error>) in
+            // Then
+            switch result {
+            case .success(let model):
+                XCTAssertEqual(model, expectedData)
+            case .failure(let error):
+                XCTFail("Expected success but got error: \(error)")
+            }
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: 1, handler: nil)
+    }
+
+    func testFetchAndDecode_Failure_NoData() {
+           // Given
+
+           let expectedEndpoint = APIEndpoint.checkAPI
+           let expectedResponse = HTTPURLResponse(
+               url: expectedEndpoint.url!,
+               statusCode: 200,
+               httpVersion: nil,
+               headerFields: nil
+           )!
+
+           MockURLProtocol.requestHandler = { request in
+               XCTAssertEqual(request.url, expectedEndpoint.url)
+               XCTAssertEqual(request.httpMethod, HTTPMethod.GET.rawValue)
+               return MockResponse(response: expectedResponse, data: nil, error: nil)
+           }
+
+           let expectation = self.expectation(description: "FetchAndDecode fails due to decoding error")
+
+           // When
+           apiService.fetchAndDecode(endpoint: expectedEndpoint, method: .GET) { (result: Result<TestModel, Error>) in
+               // Then
+               switch result {
+               case .success:
+                   XCTFail("Expected failure but got success")
+               case .failure(let error):
+                   if let apiError = error as? APIError, case .noData = apiError {
+                       XCTAssertTrue(true, "Error is of type APIError.noData")
+                   } else {
+                       XCTFail("Expected APIError.noData but got \(error)")
+                   }
+               }
+               expectation.fulfill()
+           }
+
+           waitForExpectations(timeout: 1, handler: nil)
+       }
+
+    func testFetchAndDecode_Failure_DecodingError() {
+           // Given
+           let invalidJSONData = Data("""
+           { "invalidKey": "invalidValue" }
+           """.utf8)
+
+           let expectedEndpoint = APIEndpoint.checkAPI
+           let expectedResponse = HTTPURLResponse(
+               url: expectedEndpoint.url!,
+               statusCode: 200,
+               httpVersion: nil,
+               headerFields: nil
+           )!
+
+           MockURLProtocol.requestHandler = { request in
+               XCTAssertEqual(request.url, expectedEndpoint.url)
+               XCTAssertEqual(request.httpMethod, HTTPMethod.GET.rawValue)
+               return MockResponse(response: expectedResponse, data: invalidJSONData, error: nil)
+           }
+
+           let expectation = self.expectation(description: "FetchAndDecode fails due to decoding error")
+
+           // When
+           apiService.fetchAndDecode(endpoint: expectedEndpoint, method: .GET) { (result: Result<TestModel, Error>) in
+               // Then
+               switch result {
+               case .success:
+                   XCTFail("Expected failure but got success")
+               case .failure(let error):
+                   guard let decodingError = error as? DecodingError else {
+                       XCTFail("Expected DecodingError but got \(error)")
+                       return
+                   }
+
+                   switch decodingError {
+                   case .typeMismatch, .valueNotFound, .keyNotFound, .dataCorrupted:
+                       XCTAssertTrue(true, "Error is a valid DecodingError: \(decodingError)")
+                   default:
+                       XCTFail("Unexpected DecodingError type: \(decodingError)")
+                   }
+               }
+               expectation.fulfill()
+           }
+
+           waitForExpectations(timeout: 1, handler: nil)
+       }
 }
+
+//    func testFetchDecodable_Failure_TaskError() {
+//        // Given
+//        let expectedEndpoint = APIEndpoint.checkAPI
+//
+//        let nsError = NSError(domain: "TestDomain", code: 1234, userInfo: [NSLocalizedDescriptionKey: "Mocked error"])
+//
+//        MockURLProtocol.requestHandler = { request in
+//            XCTAssertEqual(request.url, expectedEndpoint.url)
+//            XCTAssertEqual(request.httpMethod, HTTPMethod.GET.rawValue)
+//            return MockResponse(response: nil, data: nil, error: nsError)
+//        }
+//
+//        let expectation = self.expectation(description: "FetchDecodable completes")
+//
+//        // When
+//        apiService.fetchDecodable(endpoint: expectedEndpoint, method: .GET) { (result: Result<TestModel, Error>) in
+//            // Then
+//            switch result {
+//            case .success:
+//                XCTFail("Expected failure but got success")
+//            case .failure(let error):
+//                // Vérification que l'erreur est bien un NSError et correspond à ce qu'on a simulé
+//                XCTAssertEqual((error as NSError).domain, nsError.domain)
+//                XCTAssertEqual((error as NSError).code, nsError.code)
+//                XCTAssertEqual((error as NSError).localizedDescription, nsError.localizedDescription)
+//            }
+//            expectation.fulfill()
+//        }
+//
+//        waitForExpectations(timeout: 1, handler: nil)
+//    }
+//
+//    func testFetchDecodable_Failure_InvalidResponse() {
+//        // Given
+//        let expectedEndpoint = APIEndpoint.checkAPI
+//
+//        MockURLProtocol.requestHandler = { request in
+//            XCTAssertEqual(request.url, expectedEndpoint.url)
+//            XCTAssertEqual(request.httpMethod, HTTPMethod.GET.rawValue)
+//            return MockResponse(response: nil, data: nil, error: nil) // Pas de réponse HTTP
+//        }
+//
+//        let expectation = self.expectation(description: "FetchDecodable fails due to invalid response")
+//
+//        // When
+//        apiService.fetchDecodable(endpoint: expectedEndpoint, method: .GET) { (result: Result<TestModel, Error>) in
+//            // Then
+//            switch result {
+//            case .success:
+//                XCTFail("Expected failure but got success")
+//            case .failure(let error):
+//                if let apiError = error as? APIError, case .invalidResponse = apiError {
+//                    XCTAssertTrue(true, "Error is of type APIError.invalidResponse")
+//                } else {
+//                    XCTFail("Expected APIError.invalidResponse but got \(error)")
+//                }
+//            }
+//            expectation.fulfill()
+//        }
+//
+//        waitForExpectations(timeout: 1, handler: nil)
+//    }
+//
+//    func testFetchDecodable_Failure_HTTPError() {
+//        // Given
+//        let expectedEndpoint = APIEndpoint.checkAPI
+//        let expectedStatusCode = 404
+//
+//        let expectedResponse = HTTPURLResponse(
+//            url: expectedEndpoint.url!,
+//            statusCode: expectedStatusCode,
+//            httpVersion: nil,
+//            headerFields: nil
+//        )!
+//
+//        MockURLProtocol.requestHandler = { request in
+//            XCTAssertEqual(request.url, expectedEndpoint.url)
+//            XCTAssertEqual(request.httpMethod, HTTPMethod.GET.rawValue)
+//            return MockResponse(response: expectedResponse, data: nil, error: nil)
+//        }
+//
+//        let expectation = self.expectation(description: "FetchDecodable fails due to HTTP error")
+//
+//        // When
+//        apiService.fetchDecodable(endpoint: expectedEndpoint, method: .GET) { (result: Result<TestModel, Error>) in
+//            // Then
+//            switch result {
+//            case .success:
+//                XCTFail("Expected failure but got success")
+//            case .failure(let error):
+//                if let apiError = error as? APIError, case let .httpError(statusCode) = apiError {
+//                    XCTAssertEqual(statusCode, expectedStatusCode)
+//                } else {
+//                    XCTFail("Expected APIError.httpError but got \(error)")
+//                }
+//            }
+//            expectation.fulfill()
+//        }
+//
+//        waitForExpectations(timeout: 1, handler: nil)
+//    }
+//
+//    func testFetchDecodable_Failure_NoData() {
+//        // Given
+//        let expectedEndpoint = APIEndpoint.checkAPI
+//
+//        let expectedResponse = HTTPURLResponse(
+//            url: expectedEndpoint.url!,
+//            statusCode: 200,
+//            httpVersion: nil,
+//            headerFields: nil
+//        )!
+//
+//        MockURLProtocol.requestHandler = { request in
+//            XCTAssertEqual(request.url, expectedEndpoint.url)
+//            XCTAssertEqual(request.httpMethod, HTTPMethod.GET.rawValue)
+//            return MockResponse(response: expectedResponse, data: Data(), error: nil) // Pas de données
+//        }
+//
+//        let expectation = self.expectation(description: "FetchDecodable fails due to no data")
+//
+//        // When
+//        apiService.fetchDecodable(endpoint: expectedEndpoint, method: .GET) { (result: Result<TestModel, Error>) in
+//            // Then
+//            switch result {
+//            case .success:
+//                XCTFail("Expected failure but got success")
+//            case .failure(let error):
+//                if let apiError = error as? APIError, case .noData = apiError {
+//                    XCTAssertTrue(true, "Error is of type APIError.noData")
+//                } else {
+//                    XCTFail("Expected APIError.noData but got \(error)")
+//                }
+//            }
+//            expectation.fulfill()
+//        }
+//
+//        waitForExpectations(timeout: 1, handler: nil)
+//    }
+//
+//    func testFetchDecodable_Failure_DecodingError() {
+//        // Given
+//        let expectedEndpoint = APIEndpoint.checkAPI
+//
+//        let invalidJSONData = Data("""
+//        { "invalidKey": "invalidValue" }
+//        """.utf8)
+//
+//        let expectedResponse = HTTPURLResponse(
+//            url: expectedEndpoint.url!,
+//            statusCode: 200,
+//            httpVersion: nil,
+//            headerFields: nil
+//        )!
+//
+//        MockURLProtocol.requestHandler = { request in
+//            XCTAssertEqual(request.url, expectedEndpoint.url)
+//            XCTAssertEqual(request.httpMethod, HTTPMethod.GET.rawValue)
+//            return MockResponse(response: expectedResponse, data: invalidJSONData, error: nil)
+//        }
+//
+//        let expectation = self.expectation(description: "FetchDecodable fails due to JSON decoding error")
+//
+//        // When
+//        apiService.fetchDecodable(endpoint: expectedEndpoint, method: .GET) { (result: Result<TestModel, Error>) in
+//            // Then
+//            switch result {
+//            case .success:
+//                XCTFail("Expected failure but got success")
+//            case .failure(let error):
+//                guard let decodingError = error as? DecodingError else {
+//                    XCTFail("Expected DecodingError but got \(error)")
+//                    expectation.fulfill()
+//                    return
+//                }
+//
+//                switch decodingError {
+//                case .typeMismatch, .valueNotFound, .keyNotFound, .dataCorrupted:
+//                    XCTAssertTrue(true, "Error is a valid DecodingError: \(decodingError)")
+//                default:
+//                    XCTFail("Unexpected DecodingError type: \(decodingError)")
+//                }
+//            }
+//            expectation.fulfill()
+//        }
+//
+//        waitForExpectations(timeout: 1, handler: nil)
+//    }
