@@ -14,8 +14,7 @@ struct RequestBuilder {
         endpoint: APIEndpoint,
         method: HTTPMethod,
         body: Data? = nil,
-        headers: [String: String]? = nil,
-        defaultHeaders: [String: String] = ["Content-Type": "application/json"]
+        headers: HTTPHeaders? = nil
     ) throws(APIError) -> URLRequest {
         guard let url = endpoint.url else {
             throw APIError.invalidURL
@@ -24,14 +23,9 @@ struct RequestBuilder {
         var request = URLRequest(url: url)
         request.httpMethod = method.rawValue
 
-        var allHeaders = defaultHeaders
-        if let additionalHeaders = headers {
-            for (key, value) in additionalHeaders {
-                allHeaders[key] = value
-            }
+        if let headers = headers {
+            request = headers.addToRequest(request: request)
         }
-        // Add headers to the request
-        allHeaders.forEach { request.setValue($0.value, forHTTPHeaderField: $0.key) }
 
         if let body = body {
             request.httpBody = body

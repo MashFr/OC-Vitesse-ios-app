@@ -19,7 +19,7 @@ struct APIService {
         endpoint: APIEndpoint,
         method: HTTPMethod,
         body: Data? = nil,
-        headers: [String: String]? = nil,
+        headers: HTTPHeaders? = nil,
         completion: @escaping (Result<Data?, Error>) -> Void
     ) {
         do {
@@ -69,7 +69,7 @@ struct APIService {
         endpoint: APIEndpoint,
         method: HTTPMethod,
         body: Data? = nil,
-        headers: [String: String]? = nil,
+        headers: HTTPHeaders? = nil,
         completion: @escaping (Result<T, Error>) -> Void
     ) {
         fetch(endpoint: endpoint, method: method, body: body, headers: headers) { result in

@@ -22,27 +22,34 @@ enum APIEndpoint {
     case toggleFavoriteCandidate(id: String)
     case custom(path: String)
 
+    private var candidateBase: String {
+        return "/candidate"
+    }
+
+    private var userBase: String {
+        return "/user"
+    }
+
     var path: String {
         switch self {
         case .checkAPI:
             return ""
         case .authenticate:
-            return "/user/auth"
+            return "\(userBase)/auth"
         case .register:
-            return "/user/register"
-        // todo: candidateBase
+            return "\(userBase)/register"
         case .getCandidates:
-            return "/candidate"
+            return candidateBase
         case .getCandidateDetail(let id):
-            return "/candidate/\(id)"
+            return "\(candidateBase)/\(id)"
         case .createCandidate:
-            return "/candidate"
+            return candidateBase
         case .updateCandidate(let id):
-            return "/candidate/\(id)"
+            return "\(candidateBase)/\(id)"
         case .deleteCandidate(let id):
-            return "/candidate/\(id)"
+            return "\(candidateBase)/\(id)"
         case .toggleFavoriteCandidate(let id):
-            return "/candidate/\(id)/favorite"
+            return "\(candidateBase)/\(id)/favorite"
         case .custom(let path):
             return path
         }
@@ -58,33 +65,4 @@ enum HTTPMethod: String {
     case POST
     case PUT
     case DELETE
-}
-
-struct HTTPHeaders {
-    let header: [String: String] = [:]
-
-    enum ContentType: String {
-        case json = "application/json"
-        case xml = "application/xml"
-        case formUrlEncoded = "application/x-www-form-urlencoded"
-        case plainText = "text/plain"
-
-        var contentTypeHeader: [String: String] {
-            ["Content-Type": self.rawValue]
-        }
-    }
-
-    enum Accept: String {
-        case json = "application/json"
-        case xml = "application/xml"
-        case html = "text/html"
-
-        var acceptHeader: [String: String] {
-            ["Accept": self.rawValue]
-        }
-    }
-
-    static func addAuthorization(token: String) -> [String: String] {
-       return ["Authorization": "Bearer \(token)"]
-    }
 }
