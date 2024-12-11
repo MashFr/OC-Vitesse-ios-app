@@ -84,9 +84,7 @@ struct RegisterView: View {
                 }
 
                 Button {
-                    Task {
-                        await viewModel.input.register()
-                    }
+                    viewModel.input.register()
                 } label: {
                     if viewModel.output.isLoading {
                         ProgressButton()
@@ -100,10 +98,38 @@ struct RegisterView: View {
 
             Spacer()
         }
-        .onChange(of: viewModel.output.isRegistrationSuccessful) { _, isSuccessful in
-            if isSuccessful {
-                presentationMode.wrappedValue.dismiss()
+        .alert(isPresented: Binding(get: {
+            viewModel.output.isRegistrationSuccessful
+        }, set: { _ in
+            // TODO: bug in sucess
+            return
+        })) {
+            Alert(
+                title: Text("Inscription réussie"),
+                message: Text(
+                    "Vous avez été inscrit avec succès. Vous allez être redirigé vers la page de connexion."
+                ),
+                dismissButton: .default(Text("OK"), action: {
+                    presentationMode.wrappedValue.dismiss()
+                })
+            )
+        }
+        .alert(isPresented: Binding(get: {
+            viewModel.output.showErrorAlert
+        }, set: { showErrorAlert in
+            viewModel.input.updateShowErrorAlert(showErrorAlert)
+        })) {
+            var errorMsg = "Veuillez réessayer."
+            if let error = viewModel.output.errorMessage {
+                errorMsg = error
             }
+
+            return Alert(
+                title: Text("Inscription échoué"),
+                message: Text(
+                    errorMsg
+                )
+            )
         }
     }
 }

@@ -27,7 +27,9 @@ struct LoginView: View {
                             viewModel.input.updateEmail(email)
                         })
                     )
-                    .padding(.bottom, 14)
+                    if let error = viewModel.output.emailError {
+                        Text(error.localizedDescription).foregroundColor(.red).font(.caption)
+                    }
 
                     SecureInputField(label: "Password", placeholder: "", text: Binding(
                         get: {
@@ -35,10 +37,14 @@ struct LoginView: View {
                         }, set: { password in
                             viewModel.input.updatePassword(password)
                         })
-                    )
+                    ).padding(.top, 14)
+                    if let error = viewModel.output.passwordError {
+                        Text(error.localizedDescription).foregroundColor(.red).font(.caption)
+                            .padding(.bottom, 10)
+                    }
 
-                    if let errorMessage = viewModel.output.errorMessage {
-                        Text(errorMessage)
+                    if let errorMessage = viewModel.output.loginError {
+                        Text(errorMessage.localizedDescription)
                             .foregroundStyle(.red)
                             .font(.caption)
                             .padding(.bottom, 10)
@@ -49,9 +55,8 @@ struct LoginView: View {
                         .padding(.bottom, 20)
 
                     Button {
-                        Task {
-                            await viewModel.input.login()
-                        }
+                        // TODO: task or not
+                        viewModel.input.login()
                     } label: {
                         if viewModel.output.isLoading {
                             ProgressButton()
