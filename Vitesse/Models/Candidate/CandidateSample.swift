@@ -1,23 +1,15 @@
 //
-//  Candidate.swift
+//  CandidateSample.swift
 //  Vitesse
 //
 //  Created by Tony Stark on 15/11/2024.
 //
 import Foundation
 
-struct Candidate: Identifiable, Hashable {
-    let id = UUID()
-    var firstName: String
-    var lastName: String
-    var email: String
-    var phone: String?
-    var linkedinURL: URL?
-    var note: String?
-    var isFavorite: Bool
+extension Candidate {
 
-    // Initialisation avec des valeurs par défaut
     init(firstName: String,
+         id: UUID = UUID(),
          lastName: String,
          email: String,
          phone: String? = nil,
@@ -25,6 +17,7 @@ struct Candidate: Identifiable, Hashable {
          note: String? = nil,
          isFavorite: Bool = false) {
 
+        self.id = id
         self.firstName = firstName
         self.lastName = lastName
         self.email = email

@@ -29,6 +29,7 @@ class LoginViewModel: ObservableObject, LoginViewModelInput, LoginViewModelOutpu
         self.password = password
     }
 
+    @MainActor
     func login() async {
         guard !email.isEmpty && !password.isEmpty else {
             errorMessage = "Email and password are required."
