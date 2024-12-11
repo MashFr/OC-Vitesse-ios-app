@@ -41,7 +41,9 @@ struct APIService {
         completion: @escaping (Result<Data?, Error>) -> Void
     ) {
         session.dataTask(with: request) { data, response, error in
+
             // Handle network errors
+            // TODO: improve error management from server
             if let error = error {
                 completion(.failure(error))
                 return

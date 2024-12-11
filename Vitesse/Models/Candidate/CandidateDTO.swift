@@ -8,7 +8,7 @@
 import Foundation
 
 //  DTO (Data Transfer Object)
-struct CandidateDTO: Decodable, Encodable {
+struct CandidateDTO: Codable {
     let id: UUID
     var firstName: String
     var lastName: String
