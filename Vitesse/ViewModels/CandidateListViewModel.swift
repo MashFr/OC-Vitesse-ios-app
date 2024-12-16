@@ -81,7 +81,9 @@ class CandidateListViewModel: ObservableObject, CandidateListViewModelOutput, Ca
                     switch result {
                     case .success:
                         // Supprimer localement le candidat de la liste s'il est supprimé avec succès
+                        print("Avant suppression : \(self.candidates.map { $0.firstName })")
                         self.candidates.removeAll { $0.id == candidateId }
+                        print("Après suppression : \(self.candidates.map { $0.firstName })")
                     case .failure:
                         // Ajouter l'ID du candidat échoué à la liste des erreurs
                         failedCandidates.append(candidateId)

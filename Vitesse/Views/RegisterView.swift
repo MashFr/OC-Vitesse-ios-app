@@ -98,39 +98,37 @@ struct RegisterView: View {
 
             Spacer()
         }
-        .alert(isPresented: Binding(get: {
-            viewModel.output.isRegistrationSuccessful
-        }, set: { _ in
-            // TODO: bug in sucess
-            return
-        })) {
-            Alert(
-                title: Text("Inscription réussie"),
-                message: Text(
-                    "Vous avez été inscrit avec succès. Vous allez être redirigé vers la page de connexion."
-                ),
-                dismissButton: .default(Text("OK"), action: {
+        .alert(
+            "Inscription réussie",
+            isPresented: Binding(
+                get: {
+                    viewModel.output.showSuccessAlert
+                }, set: { showSuccessAlert in
+                    viewModel.input.updateShowSuccessAlert(showSuccessAlert)
+                }),
+            actions: {
+                Button("OK") {
                     presentationMode.wrappedValue.dismiss()
-                })
-            )
-        }
-        .alert(isPresented: Binding(get: {
-            viewModel.output.showErrorAlert
-        }, set: { showErrorAlert in
-            viewModel.input.updateShowErrorAlert(showErrorAlert)
-        })) {
-            var errorMsg = "Veuillez réessayer."
-            if let error = viewModel.output.errorMessage {
-                errorMsg = error
+                }
             }
+        )
+        .alert(
+            "Inscription échoué",
+            isPresented: Binding(
+                get: {
+                    viewModel.output.showErrorAlert
+                }, set: { showErrorAlert in
+                    viewModel.input.updateShowErrorAlert(showErrorAlert)
+                }
+            ),
+            actions: {
+                Button("OK") {}
+            },
+            message: {
+                Text("Veuillez réessayer.")
 
-            return Alert(
-                title: Text("Inscription échoué"),
-                message: Text(
-                    errorMsg
-                )
-            )
-        }
+            }
+        )
     }
 }
 

@@ -178,7 +178,7 @@ class CandidateRepository {
 
         apiService.fetchAndDecode(
             endpoint: endpoint,
-            method: .PUT,
+            method: .POST,
             headers: headers
         ) { (result: Result<CandidateDTO, Error>) in
             switch result {

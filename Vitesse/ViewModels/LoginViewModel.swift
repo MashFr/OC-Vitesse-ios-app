@@ -57,7 +57,7 @@ class LoginViewModel: ObservableObject, LoginViewModelInput, LoginViewModelOutpu
             return
         }
 
-        userRepository.authenticateAndStoreToken(
+        userRepository.authenticateAndPersistUser(
             email: email,
             password: password
         ) { result in
@@ -74,7 +74,6 @@ class LoginViewModel: ObservableObject, LoginViewModelInput, LoginViewModelOutpu
                 DispatchQueue.main.async {
                     self.isLoading = false
                     self.isLoginSuccessful = false
-                    // TODO: Can also be other error
                     self.loginError = LoginError.invalidCredentials
                 }
             }
@@ -100,7 +99,7 @@ protocol LoginViewModelOutput {
     var isLoginSuccessful: Bool { get }
 }
 
-enum LoginFieldValidationError: LocalizedError {
+enum LoginFieldValidationError: LocalizedError, Equatable {
     case emptyField(fieldName: String)
 
     var errorDescription: String? {

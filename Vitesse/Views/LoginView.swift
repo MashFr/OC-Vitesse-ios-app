@@ -55,7 +55,6 @@ struct LoginView: View {
                         .padding(.bottom, 20)
 
                     Button {
-                        // TODO: task or not
                         viewModel.input.login()
                     } label: {
                         if viewModel.output.isLoading {

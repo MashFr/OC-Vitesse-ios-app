@@ -12,7 +12,7 @@ struct AuthBody: Encodable {
 }
 
 // Login Response
-struct AuthResponse: Decodable {
+struct AuthResponse: Codable {
     let token: String
     let isAdmin: Bool
 }
@@ -24,35 +24,3 @@ struct RegisterBody: Encodable {
     let firstName: String
     let lastName: String
 }
-
-//    struct User {
-//        let email: String
-//        var firstName: String
-//        var lastName: String
-//        let password: String
-//        var token: String?
-//        var isAdmin: Bool?
-//    }
-//
-//    // MARK: - Conversion methods between User and UserDTO
-//    extension User {
-//        init(from dto: UserDTO) {
-//            self.email = dto.email
-//            self.firstName = dto.firstName
-//            self.lastName = dto.lastName
-//            self.password = dto.password
-//            self.token = dto.token
-//            self.isAdmin = dto.isAdmin
-//        }
-//
-//        func toDTO() -> UserDTO {
-//            return UserDTO(
-//                email: self.email,
-//                firstName: self.firstName,
-//                lastName: self.lastName,
-//                password: self.password,
-//                token: self.token,
-//                isAdmin: self.isAdmin
-//            )
-//        }
-//    }

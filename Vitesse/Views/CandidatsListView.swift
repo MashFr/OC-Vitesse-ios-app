@@ -58,23 +58,22 @@ struct CandidateListView: View {
             .scrollContentBackground(.hidden)
             .listStyle(.plain)
         }
-        .alert(isPresented: Binding(get: {
-            viewModel.output.showErrorAlert
-        }, set: { showErrorAlert in
-            viewModel.input.updateShowErrorAlert(showErrorAlert)
-        })) {
-            var errorMsg = "Veuillez réessayer."
-            if let error = viewModel.output.errorAlertMsg {
-                errorMsg = error
+        .alert(
+            "An error occured",
+            isPresented: Binding(
+                get: {
+                    viewModel.output.showErrorAlert
+                }, set: { showErrorAlert in
+                    viewModel.input.updateShowErrorAlert(showErrorAlert)
+                }
+            ),
+            actions: {
+                Button("OK") {}
+            },
+            message: {
+                Text("\(viewModel.output.errorAlertMsg ?? "Please retry")")
             }
-
-            return Alert(
-                title: Text("An error occured"),
-                message: Text(
-                    errorMsg
-                )
-            )
-        }
+        )
         .onAppear {
             viewModel.input.fetchCandidates()
         }

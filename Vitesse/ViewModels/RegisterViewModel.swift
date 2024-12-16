@@ -32,9 +32,9 @@ class RegisterViewModel: ObservableObject, RegisterViewModelInput, RegisterViewM
     @Published private(set) var confirmPasswordError: RegisterFieldValidationError?
 
     @Published private(set) var isLoading: Bool = false
-    @Published private(set) var isRegistrationSuccessful: Bool = false {
+    @Published private(set) var showSuccessAlert: Bool = false {
         didSet {
-            print("isRegistrationSuccessful updated to \(isRegistrationSuccessful)")
+            print("showSuccessAlert updated to \(showSuccessAlert)")
         }
     }
     @Published private(set) var showErrorAlert: Bool = false
@@ -65,26 +65,25 @@ class RegisterViewModel: ObservableObject, RegisterViewModelInput, RegisterViewM
 
     func updateShowErrorAlert(_ showErrorAlert: Bool) {
         self.showErrorAlert = showErrorAlert
+        if showErrorAlert == false {
+            errorMessage = nil
+        }
+    }
+
+    func updateShowSuccessAlert(_ showSuccessAlert: Bool) {
+        self.showSuccessAlert = showSuccessAlert
     }
 
     func register() {
+        print(" at register showSuccessAlert = \(self.showSuccessAlert)" )
         self.isLoading = true
-        self.errorMessage = nil
-        self.showErrorAlert = false
-        self.isRegistrationSuccessful = false
-        self.validateAllFields()
 
-        guard firstNameError == nil, !firstName.isEmpty,
-                  lastNameError == nil, !lastName.isEmpty,
-                  emailError == nil, !emailAddress.isEmpty,
-                  passwordError == nil, !password.isEmpty,
-                  confirmPasswordError == nil, !confirmPassword.isEmpty
-        else {
+        guard validateAllFields() else {
             self.isLoading = false
             return
         }
 
-        userRepository.register(
+        userRepository.registerNewUser(
             email: emailAddress,
             password: password,
             firstName: firstName,
@@ -94,8 +93,7 @@ class RegisterViewModel: ObservableObject, RegisterViewModelInput, RegisterViewM
             case .success:
                 DispatchQueue.main.async {
                     self.isLoading = false
-                    self.errorMessage = nil
-                    self.isRegistrationSuccessful = true
+                    self.showSuccessAlert = true
                 }
             case .failure(let error):
                 DispatchQueue.main.async {
@@ -115,6 +113,7 @@ protocol RegisterViewModelInput {
     func updatePassword(_ password: String)
     func updateConfirmPassword(_ confirmPassword: String)
     func updateShowErrorAlert(_ showErrorAlert: Bool)
+    func updateShowSuccessAlert(_ showSuccessAlert: Bool)
     func register()
 }
 
@@ -132,12 +131,12 @@ protocol RegisterViewModelOutput {
     var confirmPasswordError: RegisterFieldValidationError? { get }
 
     var isLoading: Bool { get }
-    var isRegistrationSuccessful: Bool { get }
+    var showSuccessAlert: Bool { get }
     var showErrorAlert: Bool { get }
     var errorMessage: String? { get }
 }
 
-enum RegisterFieldValidationError: LocalizedError {
+enum RegisterFieldValidationError: LocalizedError, Equatable {
     case emptyField(fieldName: String)
     case invalidEmail
     case shortPassword(minLength: Int)
@@ -162,7 +161,6 @@ extension RegisterViewModel {
 
     private func validateFirstName() {
         firstNameError = firstName.isEmpty ? .emptyField(fieldName: "First Name") : nil
-        print(firstNameError)
     }
 
     private func validateLastName() {
@@ -170,9 +168,12 @@ extension RegisterViewModel {
     }
 
     private func validateEmailAddress() {
+        let emailRegex = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$"
+        let emailPredicate = NSPredicate(format: "SELF MATCHES %@", emailRegex)
+
         if emailAddress.isEmpty {
             emailError = .emptyField(fieldName: "Email")
-        } else if !emailAddress.contains("@") {
+        } else if !emailPredicate.evaluate(with: emailAddress) {
             emailError = .invalidEmail
         } else {
             emailError = nil
@@ -199,11 +200,17 @@ extension RegisterViewModel {
         }
     }
 
-    private func validateAllFields() {
+    private func validateAllFields() -> Bool {
         validateFirstName()
         validateLastName()
         validateEmailAddress()
         validatePassword()
         validateConfirmPassword()
+
+        return firstNameError == nil &&
+               lastNameError == nil &&
+               emailError == nil &&
+               passwordError == nil &&
+               confirmPasswordError == nil
     }
 }
