@@ -19,20 +19,18 @@ struct TestModel: Codable, Equatable {
 
 class APIServiceTests: XCTestCase {
     var apiService: APIService!
-    var mockSession: URLSession!
 
     override func setUp() {
         super.setUp()
         let configuration = URLSessionConfiguration.ephemeral
         configuration.protocolClasses = [MockURLProtocol.self]
-        mockSession = URLSession(configuration: configuration)
+        let mockSession = URLSession(configuration: configuration)
         apiService = APIService(session: mockSession)
     }
 
     override func tearDown() {
         MockURLProtocol.requestHandler = nil
         apiService = nil
-        mockSession = nil
         super.tearDown()
     }
 
@@ -109,7 +107,7 @@ class APIServiceTests: XCTestCase {
         MockURLProtocol.requestHandler = { request in
             XCTAssertEqual(request.url, expectedEndpoint.url)
             XCTAssertEqual(request.httpMethod, HTTPMethod.POST.rawValue)
-            return MockResponse(response: nil, data: nil, error: nil) // Pas de réponse HTTP
+            return MockResponse(response: nil, data: nil, error: nil)
         }
 
         let expectation = self.expectation(description: "Fetch fails due to invalid response")
