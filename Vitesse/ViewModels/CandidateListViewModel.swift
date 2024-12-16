@@ -41,7 +41,6 @@ class CandidateListViewModel: ObservableObject, CandidateListViewModelOutput, Ca
 
     var input: CandidateListViewModelInput { self}
 
-    // MARK: - Fetch Candidates
     func fetchCandidates() {
         self.candidates.removeAll()
         repository.fetchCandidates { result in
@@ -49,9 +48,9 @@ class CandidateListViewModel: ObservableObject, CandidateListViewModelOutput, Ca
                 switch result {
                 case .success(let fetchedCandidates):
                     self.candidates = fetchedCandidates
-                case .failure(let error):
+                case .failure:
                     self.showErrorAlert = true
-                    self.errorAlertMsg = error.localizedDescription
+                    self.errorAlertMsg = "Failed to fetch candidates."
                 }
             }
         }
@@ -70,9 +69,9 @@ class CandidateListViewModel: ObservableObject, CandidateListViewModelOutput, Ca
     }
 
     func deleteSelectedCandidates() {
-        let selectedIds = Array(selectedCandidates) // Convertir le Set en tableau
-        let group = DispatchGroup() // Gérer les suppressions simultanées
-        var failedCandidates: [UUID] = [] // Garde une trace des suppressions échouées
+        let selectedIds = Array(selectedCandidates)
+        let group = DispatchGroup()
+        var failedCandidates: [UUID] = []
 
         selectedIds.forEach { candidateId in
             group.enter()
@@ -80,12 +79,8 @@ class CandidateListViewModel: ObservableObject, CandidateListViewModelOutput, Ca
                 DispatchQueue.main.async {
                     switch result {
                     case .success:
-                        // Supprimer localement le candidat de la liste s'il est supprimé avec succès
-                        print("Avant suppression : \(self.candidates.map { $0.firstName })")
                         self.candidates.removeAll { $0.id == candidateId }
-                        print("Après suppression : \(self.candidates.map { $0.firstName })")
                     case .failure:
-                        // Ajouter l'ID du candidat échoué à la liste des erreurs
                         failedCandidates.append(candidateId)
                     }
                     group.leave()
@@ -95,12 +90,10 @@ class CandidateListViewModel: ObservableObject, CandidateListViewModelOutput, Ca
 
         group.notify(queue: .main) {
             if failedCandidates.isEmpty {
-                // Si toutes les suppressions réussissent
-                self.fetchCandidates() // Rafraîchir la liste complète
+                self.fetchCandidates()
             } else {
-                // Si certaines suppressions échouent, afficher une alerte
                 self.showErrorAlert = true
-                self.errorAlertMsg = "\(failedCandidates.count) suppression(s) ont échoué. Veuillez réessayer."
+                self.errorAlertMsg = "\(failedCandidates.count) delete(s) failed. Please try again."
             }
         }
     }

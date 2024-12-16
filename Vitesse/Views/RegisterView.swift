@@ -99,7 +99,7 @@ struct RegisterView: View {
             Spacer()
         }
         .alert(
-            "Inscription réussie",
+            "Successful registration",
             isPresented: Binding(
                 get: {
                     viewModel.output.showSuccessAlert
@@ -113,7 +113,7 @@ struct RegisterView: View {
             }
         )
         .alert(
-            "Inscription échoué",
+            "Registration failed",
             isPresented: Binding(
                 get: {
                     viewModel.output.showErrorAlert
@@ -125,7 +125,7 @@ struct RegisterView: View {
                 Button("OK") {}
             },
             message: {
-                Text("Veuillez réessayer.")
+                Text("Please try again.")
 
             }
         )

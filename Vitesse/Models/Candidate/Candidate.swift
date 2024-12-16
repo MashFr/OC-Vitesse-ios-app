@@ -17,7 +17,7 @@ struct Candidate: Identifiable, Hashable {
     var isFavorite: Bool
 }
 
-// MARK: - Conversion methods between Candidate and CandidateDTO
+// Conversion methods between Candidate and CandidateDTO
 extension Candidate {
     init(from dto: CandidateDTO) {
         self.id = dto.id

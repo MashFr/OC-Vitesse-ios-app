@@ -54,7 +54,7 @@ class CandidateDetailViewModel: ObservableObject, CandidateDetailViewModelInput,
                 case .success(let fetchedCandidate):
                     self.candidate = fetchedCandidate
                 case .failure:
-//                    self.errorAlertMsg = error.localizedDescription
+                    self.errorAlertMsg = "Couldn't fetch candidate"
                     self.showErrorAlert = true
                 }
             }

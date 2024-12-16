@@ -63,14 +63,11 @@ class LoginViewModel: ObservableObject, LoginViewModelInput, LoginViewModelOutpu
         ) { result in
             switch result {
             case .success:
-                print("success login")
                 DispatchQueue.main.async {
                     self.isLoading = false
                     self.isLoginSuccessful = true
                 }
             case .failure(let error):
-                print("error login")
-                print(error)
                 DispatchQueue.main.async {
                     self.isLoading = false
                     self.isLoginSuccessful = false

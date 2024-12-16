@@ -74,8 +74,8 @@ class CandidateEditViewModel: ObservableObject, CandidateEditViewModelInput, Can
                 switch result {
                 case .success:
                     self.showSuccessAlert = true
-                case .failure(let error):
-                    self.errorMessage = error.localizedDescription
+                case .failure:
+                    self.errorMessage = "Could not update candidate."
                     self.showErrorAlert = true
                 }
             }
@@ -107,7 +107,7 @@ class CandidateEditViewModel: ObservableObject, CandidateEditViewModelInput, Can
                 phoneError = nil
             }
         } else {
-            phoneError = nil // Champ facultatif
+            phoneError = nil
         }
     }
 
@@ -120,7 +120,7 @@ class CandidateEditViewModel: ObservableObject, CandidateEditViewModelInput, Can
                 linkedInURLError = nil
             }
         } else {
-            linkedInURLError = nil // Champ facultatif
+            linkedInURLError = nil
         }
     }
 

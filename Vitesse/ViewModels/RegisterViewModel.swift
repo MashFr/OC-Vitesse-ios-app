@@ -32,11 +32,7 @@ class RegisterViewModel: ObservableObject, RegisterViewModelInput, RegisterViewM
     @Published private(set) var confirmPasswordError: RegisterFieldValidationError?
 
     @Published private(set) var isLoading: Bool = false
-    @Published private(set) var showSuccessAlert: Bool = false {
-        didSet {
-            print("showSuccessAlert updated to \(showSuccessAlert)")
-        }
-    }
+    @Published private(set) var showSuccessAlert: Bool = false
     @Published private(set) var showErrorAlert: Bool = false
     @Published private(set) var errorMessage: String?
 
@@ -75,7 +71,6 @@ class RegisterViewModel: ObservableObject, RegisterViewModelInput, RegisterViewM
     }
 
     func register() {
-        print(" at register showSuccessAlert = \(self.showSuccessAlert)" )
         self.isLoading = true
 
         guard validateAllFields() else {
