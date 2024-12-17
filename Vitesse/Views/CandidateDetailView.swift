@@ -10,8 +10,8 @@ struct CandidateDetailView: View {
     @StateObject var viewModel: CandidateDetailViewModel
 
     init(candidate: Candidate) {
-            _viewModel = StateObject(wrappedValue: CandidateDetailViewModel(candidate: candidate))
-        }
+        _viewModel = StateObject(wrappedValue: CandidateDetailViewModel(candidate: candidate))
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 30) {
@@ -20,12 +20,13 @@ struct CandidateDetailView: View {
                     .font(.largeTitle)
                     .bold()
                 Spacer()
-                Button {
-                    // TODO: Loading and error
-                    viewModel.input.toggleFavorite()
-                } label: {
-                    Image(systemName: viewModel.output.candidate.isFavorite ? "star.fill" : "star")
-                        .foregroundStyle(viewModel.output.candidate.isFavorite ? .yellow : .gray)
+                if UserDefaults.standard.bool(forKey: "is_admin") {
+                    Button {
+                        viewModel.input.markCandidateAsFavorite()
+                    } label: {
+                        Image(systemName: viewModel.output.candidate.isFavorite ? "star.fill" : "star")
+                            .foregroundStyle(viewModel.output.candidate.isFavorite ? .yellow : .gray)
+                    }
                 }
             }
 
@@ -94,6 +95,25 @@ struct CandidateDetailView: View {
                     Text("Edit")
                 }
             }
+        }
+        .alert(
+            "An error occured",
+            isPresented: Binding(
+                get: {
+                    viewModel.output.showErrorAlert
+                }, set: { showErrorAlert in
+                    viewModel.input.updateShowErrorAlert(showErrorAlert)
+                }
+            ),
+            actions: {
+                Button("OK") {}
+            },
+            message: {
+                Text("\(viewModel.output.errorAlertMsg ?? "Please retry")")
+            }
+        )
+        .onAppear {
+            viewModel.input.fetchCandidate()
         }
     }
 }

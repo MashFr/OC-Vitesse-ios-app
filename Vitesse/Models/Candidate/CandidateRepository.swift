@@ -25,7 +25,7 @@ class CandidateRepository {
             return
         }
 
-        let endpoint = APIEndpoint.getCandidates // L'endpoint pour récupérer les candidats
+        let endpoint = APIEndpoint.getCandidates
         let headers = HTTPHeaders(forJSON: true, authToken: authToken)
 
         apiService.fetchAndDecode(
@@ -178,7 +178,7 @@ class CandidateRepository {
 
         apiService.fetchAndDecode(
             endpoint: endpoint,
-            method: .PUT,
+            method: .POST,
             headers: headers
         ) { (result: Result<CandidateDTO, Error>) in
             switch result {

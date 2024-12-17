@@ -58,7 +58,25 @@ struct CandidateListView: View {
             .scrollContentBackground(.hidden)
             .listStyle(.plain)
         }
-        // TODO: Refresh candidates on load
+        .alert(
+            "An error occured",
+            isPresented: Binding(
+                get: {
+                    viewModel.output.showErrorAlert
+                }, set: { showErrorAlert in
+                    viewModel.input.updateShowErrorAlert(showErrorAlert)
+                }
+            ),
+            actions: {
+                Button("OK") {}
+            },
+            message: {
+                Text("\(viewModel.output.errorAlertMsg ?? "Please retry")")
+            }
+        )
+        .onAppear {
+            viewModel.input.fetchCandidates()
+        }
     }
 }
 

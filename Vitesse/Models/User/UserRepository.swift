@@ -4,7 +4,6 @@
 //
 //  Created by Tony Stark on 04/12/2024.
 //
-
 import Foundation
 
 class UserRepository {
@@ -17,7 +16,7 @@ class UserRepository {
     }
 
     // MARK: - Authenticate User
-    func authenticate(
+    func authenticateUser(
         email: String,
         password: String,
         completion: @escaping (Result<AuthResponse, Error>) -> Void
@@ -41,18 +40,23 @@ class UserRepository {
         }
     }
 
-    // MARK: - Authenticate and Store Token (Public)
-    func authenticateAndStoreToken(
+    // MARK: - Authenticate and Persist User Info
+    func authenticateAndPersistUser(
         email: String,
         password: String,
         completion: @escaping (Result<AuthResponse, Error>) -> Void
     ) {
-        // Appel de la méthode privée authenticate
-        authenticate(email: email, password: password) { result in
+        // Call the private authenticateUser method
+        authenticateUser(email: email, password: password) { result in
             switch result {
             case .success(let authResponse):
                 do {
+                    // Store the token in the Keychain
                     try self.keychainService.saveOrUpdate(authResponse.token, forKey: "auth_token")
+
+                    // Store isAdmin in UserDefaults
+                    UserDefaults.standard.set(authResponse.isAdmin, forKey: "is_admin")
+
                     completion(.success(authResponse))
                 } catch {
                     completion(.failure(error))
@@ -63,8 +67,8 @@ class UserRepository {
         }
     }
 
-    // MARK: - Register User
-    func register(
+    // MARK: - Register New User
+    func registerNewUser(
         email: String,
         password: String,
         firstName: String,

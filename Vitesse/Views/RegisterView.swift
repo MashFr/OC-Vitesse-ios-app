@@ -84,9 +84,7 @@ struct RegisterView: View {
                 }
 
                 Button {
-                    Task {
-                        await viewModel.input.register()
-                    }
+                    viewModel.input.register()
                 } label: {
                     if viewModel.output.isLoading {
                         ProgressButton()
@@ -100,11 +98,37 @@ struct RegisterView: View {
 
             Spacer()
         }
-        .onChange(of: viewModel.output.isRegistrationSuccessful) { _, isSuccessful in
-            if isSuccessful {
-                presentationMode.wrappedValue.dismiss()
+        .alert(
+            "Successful registration",
+            isPresented: Binding(
+                get: {
+                    viewModel.output.showSuccessAlert
+                }, set: { showSuccessAlert in
+                    viewModel.input.updateShowSuccessAlert(showSuccessAlert)
+                }),
+            actions: {
+                Button("OK") {
+                    presentationMode.wrappedValue.dismiss()
+                }
             }
-        }
+        )
+        .alert(
+            "Registration failed",
+            isPresented: Binding(
+                get: {
+                    viewModel.output.showErrorAlert
+                }, set: { showErrorAlert in
+                    viewModel.input.updateShowErrorAlert(showErrorAlert)
+                }
+            ),
+            actions: {
+                Button("OK") {}
+            },
+            message: {
+                Text("Please try again.")
+
+            }
+        )
     }
 }
 

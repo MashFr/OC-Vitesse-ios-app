@@ -64,7 +64,6 @@ class KeychainService {
             // Try to retrieve the item, if found update it
             _ = try retrieve(forKey: key)
             try update(value, forKey: key)
-            print("Updated")
         } catch KeychainError.itemNotFound {
             // If not found, create a new item
             try save(value, forKey: key)

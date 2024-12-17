@@ -10,15 +10,15 @@ import XCTest
 final class RequestBuilderTests: XCTestCase {
 
     func testBuildRequestWithValidURL() {
-        // Arrange
+        // Given
         let endpoint = APIEndpoint.getCandidates
         let method = HTTPMethod.GET
 
-        // Act
+        // When
         do {
             let request = try RequestBuilder.buildRequest(endpoint: endpoint, method: method)
 
-            // Assert
+            // Then
             XCTAssertEqual(request.url?.absoluteString, endpoint.url?.absoluteString)
             XCTAssertEqual(request.httpMethod, "GET")
             XCTAssertNil(request.httpBody)
@@ -29,13 +29,13 @@ final class RequestBuilderTests: XCTestCase {
     }
 
     func testBuildRequestWithInvalidURL() {
-        // Arrange
+        // Given
         let endpoint = APIEndpoint.custom(path: " ")
         let method = HTTPMethod.GET
 
-        // Act
+        // When
         XCTAssertThrowsError(try RequestBuilder.buildRequest(endpoint: endpoint, method: method)) { error in
-            // Assert
+            // Then
             if let apiError = error as? APIError, case .invalidURL = apiError {
                 XCTAssertTrue(true, "Error is of type APIError.invalidURL")
             } else {
@@ -45,16 +45,16 @@ final class RequestBuilderTests: XCTestCase {
     }
 
     func testBuildRequestWithHeaders() {
-        // Arrange
+        // Given
         let endpoint = APIEndpoint.authenticate
         let method = HTTPMethod.POST
         let headers = HTTPHeaders(contentType: .json, accept: .json)
 
-        // Act
+        // When
         do {
             let request = try RequestBuilder.buildRequest(endpoint: endpoint, method: method, headers: headers)
 
-            // Assert
+            // Then
             XCTAssertEqual(request.url?.absoluteString, endpoint.url?.absoluteString)
             XCTAssertEqual(request.httpMethod, "POST")
 
@@ -66,17 +66,17 @@ final class RequestBuilderTests: XCTestCase {
     }
 
     func testBuildRequestWithBody() {
-        // Arrange
+        // Given
         let endpoint = APIEndpoint.register
         let method = HTTPMethod.POST
         let bodyString = "{\"username\": \"test\", \"password\": \"1234\"}"
         let body = Data(bodyString.utf8) // Non-optional Data conversion
 
-        // Act
+        // When
         do {
             let request = try RequestBuilder.buildRequest(endpoint: endpoint, method: method, body: body)
 
-            // Assert
+            // Then
             XCTAssertEqual(request.url?.absoluteString, endpoint.url?.absoluteString)
             XCTAssertEqual(request.httpMethod, "POST")
             XCTAssertEqual(request.httpBody, body)
@@ -86,14 +86,14 @@ final class RequestBuilderTests: XCTestCase {
     }
 
     func testBuildRequestWithHeadersAndBody() {
-        // Arrange
+        // Given
         let endpoint = APIEndpoint.createCandidate
         let method = HTTPMethod.POST
         let headers = HTTPHeaders(forJSON: true)
         let bodyString = "{\"name\": \"John Doe\", \"email\": \"johndoe@example.com\"}"
         let body = Data(bodyString.utf8) // Non-optional Data conversion
 
-        // Act
+        // When
         do {
             let request = try RequestBuilder.buildRequest(
                 endpoint: endpoint,
@@ -102,7 +102,7 @@ final class RequestBuilderTests: XCTestCase {
                 headers: headers
             )
 
-            // Assert
+            // Then
             XCTAssertEqual(request.url?.absoluteString, endpoint.url?.absoluteString)
             XCTAssertEqual(request.httpMethod, "POST")
             XCTAssertEqual(request.httpBody, body)

@@ -9,6 +9,13 @@ import Combine
 
 class RegisterViewModel: ObservableObject, RegisterViewModelInput, RegisterViewModelOutput {
 
+    private let userRepository: UserRepository
+
+    // MARK: - Initializer
+    init(userRepository: UserRepository = UserRepository()) {
+        self.userRepository = userRepository
+    }
+
     // MARK: - OUTPUT
     var output: RegisterViewModelOutput { self }
 
@@ -18,57 +25,79 @@ class RegisterViewModel: ObservableObject, RegisterViewModelInput, RegisterViewM
     @Published private(set) var password: String = ""
     @Published private(set) var confirmPassword: String = ""
 
-    @Published private(set) var firstNameError: FieldValidationError?
-    @Published private(set) var lastNameError: FieldValidationError?
-    @Published private(set) var emailError: FieldValidationError?
-    @Published private(set) var passwordError: FieldValidationError?
-    @Published private(set) var confirmPasswordError: FieldValidationError?
+    @Published private(set) var firstNameError: RegisterFieldValidationError?
+    @Published private(set) var lastNameError: RegisterFieldValidationError?
+    @Published private(set) var emailError: RegisterFieldValidationError?
+    @Published private(set) var passwordError: RegisterFieldValidationError?
+    @Published private(set) var confirmPasswordError: RegisterFieldValidationError?
 
     @Published private(set) var isLoading: Bool = false
-    @Published private(set) var isRegistrationSuccessful: Bool = false
+    @Published private(set) var showSuccessAlert: Bool = false
+    @Published private(set) var showErrorAlert: Bool = false
+    @Published private(set) var errorMessage: String?
 
     // MARK: - INPUT
     var input: RegisterViewModelInput { self }
 
     func updateFirstName(_ firstName: String) {
         self.firstName = firstName
-//        validateFirstName()
     }
 
     func updateLastName(_ lastName: String) {
         self.lastName = lastName
-//        validateLastName()
     }
 
     func updateEmailAddress(_ emailAddress: String) {
         self.emailAddress = emailAddress
-//        validateEmailAddress()
     }
 
     func updatePassword(_ password: String) {
         self.password = password
-//        validatePassword()
     }
 
     func updateConfirmPassword(_ confirmPassword: String) {
         self.confirmPassword = confirmPassword
-//        validateConfirmPassword()
     }
 
-    func register() async {
-        validateAllFields()
+    func updateShowErrorAlert(_ showErrorAlert: Bool) {
+        self.showErrorAlert = showErrorAlert
+        if showErrorAlert == false {
+            errorMessage = nil
+        }
+    }
 
-        guard firstNameError == nil,
-              lastNameError == nil,
-              emailError == nil,
-              passwordError == nil,
-              confirmPasswordError == nil else { return }
+    func updateShowSuccessAlert(_ showSuccessAlert: Bool) {
+        self.showSuccessAlert = showSuccessAlert
+    }
 
-        isLoading = true
-        defer { isLoading = false }
+    func register() {
+        self.isLoading = true
 
-        try? await Task.sleep(nanoseconds: 1_000_000_000)
-        isRegistrationSuccessful = true
+        guard validateAllFields() else {
+            self.isLoading = false
+            return
+        }
+
+        userRepository.registerNewUser(
+            email: emailAddress,
+            password: password,
+            firstName: firstName,
+            lastName: lastName
+        ) { result in
+            switch result {
+            case .success:
+                DispatchQueue.main.async {
+                    self.isLoading = false
+                    self.showSuccessAlert = true
+                }
+            case .failure(let error):
+                DispatchQueue.main.async {
+                    self.isLoading = false
+                    self.errorMessage = error.localizedDescription
+                    self.showErrorAlert = true
+                }
+            }
+        }
     }
 }
 
@@ -78,7 +107,9 @@ protocol RegisterViewModelInput {
     func updateEmailAddress(_ emailAddress: String)
     func updatePassword(_ password: String)
     func updateConfirmPassword(_ confirmPassword: String)
-    func register() async
+    func updateShowErrorAlert(_ showErrorAlert: Bool)
+    func updateShowSuccessAlert(_ showSuccessAlert: Bool)
+    func register()
 }
 
 protocol RegisterViewModelOutput {
@@ -88,17 +119,19 @@ protocol RegisterViewModelOutput {
     var password: String { get }
     var confirmPassword: String { get }
 
-    var firstNameError: FieldValidationError? { get }
-    var lastNameError: FieldValidationError? { get }
-    var emailError: FieldValidationError? { get }
-    var passwordError: FieldValidationError? { get }
-    var confirmPasswordError: FieldValidationError? { get }
+    var firstNameError: RegisterFieldValidationError? { get }
+    var lastNameError: RegisterFieldValidationError? { get }
+    var emailError: RegisterFieldValidationError? { get }
+    var passwordError: RegisterFieldValidationError? { get }
+    var confirmPasswordError: RegisterFieldValidationError? { get }
 
     var isLoading: Bool { get }
-    var isRegistrationSuccessful: Bool { get }
+    var showSuccessAlert: Bool { get }
+    var showErrorAlert: Bool { get }
+    var errorMessage: String? { get }
 }
 
-enum FieldValidationError: LocalizedError {
+enum RegisterFieldValidationError: LocalizedError, Equatable {
     case emptyField(fieldName: String)
     case invalidEmail
     case shortPassword(minLength: Int)
@@ -121,25 +154,28 @@ enum FieldValidationError: LocalizedError {
 extension RegisterViewModel {
     // MARK: - Validation Methods
 
-    func validateFirstName() {
+    private func validateFirstName() {
         firstNameError = firstName.isEmpty ? .emptyField(fieldName: "First Name") : nil
     }
 
-    func validateLastName() {
+    private func validateLastName() {
         lastNameError = lastName.isEmpty ? .emptyField(fieldName: "Last Name") : nil
     }
 
-    func validateEmailAddress() {
+    private func validateEmailAddress() {
+        let emailRegex = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$"
+        let emailPredicate = NSPredicate(format: "SELF MATCHES %@", emailRegex)
+
         if emailAddress.isEmpty {
             emailError = .emptyField(fieldName: "Email")
-        } else if !emailAddress.contains("@") {
+        } else if !emailPredicate.evaluate(with: emailAddress) {
             emailError = .invalidEmail
         } else {
             emailError = nil
         }
     }
 
-    func validatePassword() {
+    private func validatePassword() {
         if password.isEmpty {
             passwordError = .emptyField(fieldName: "Password")
         } else if password.count < 6 {
@@ -149,7 +185,7 @@ extension RegisterViewModel {
         }
     }
 
-    func validateConfirmPassword() {
+    private func validateConfirmPassword() {
         if confirmPassword.isEmpty {
             confirmPasswordError = .emptyField(fieldName: "Confirm Password")
         } else if confirmPassword != password {
@@ -159,11 +195,17 @@ extension RegisterViewModel {
         }
     }
 
-    func validateAllFields() {
+    private func validateAllFields() -> Bool {
         validateFirstName()
         validateLastName()
         validateEmailAddress()
         validatePassword()
         validateConfirmPassword()
+
+        return firstNameError == nil &&
+               lastNameError == nil &&
+               emailError == nil &&
+               passwordError == nil &&
+               confirmPasswordError == nil
     }
 }
