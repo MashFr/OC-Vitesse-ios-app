@@ -197,7 +197,7 @@ final class CandidateEditViewModelTests: XCTestCase {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             XCTAssertFalse(self.viewModel.isSaving)
             XCTAssertTrue(self.viewModel.showErrorAlert)
-            XCTAssertEqual(self.viewModel.errorMessage, "Failed to save candidate")
+            XCTAssertEqual(self.viewModel.errorMessage, "Could not update candidate.")
             expectation.fulfill()
         }
 
