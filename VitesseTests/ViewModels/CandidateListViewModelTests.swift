@@ -69,7 +69,7 @@ final class CandidateListViewModelTests: XCTestCase {
         // THEN
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             XCTAssertTrue(self.viewModel.showErrorAlert)
-            XCTAssertEqual(self.viewModel.errorAlertMsg, "Network Error")
+            XCTAssertEqual(self.viewModel.errorAlertMsg, "Failed to fetch candidates.")
             expectation.fulfill()
         }
 
@@ -205,7 +205,7 @@ final class CandidateListViewModelTests: XCTestCase {
         // THEN
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             XCTAssertTrue(self.viewModel.showErrorAlert)
-            XCTAssertEqual(self.viewModel.errorAlertMsg, "1 suppression(s) ont échoué. Veuillez réessayer.")
+            XCTAssertEqual(self.viewModel.errorAlertMsg, "1 delete(s) failed. Please try again.")
             expectation.fulfill()
         }
 
