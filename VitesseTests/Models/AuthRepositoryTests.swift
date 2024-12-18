@@ -1,5 +1,5 @@
 //
-//  UserRepositoryTests.swift
+//  AuthRepositoryTests.swift
 //  Vitesse
 //
 //  Created by Tony Stark on 13/12/2024.
@@ -7,8 +7,8 @@
 import XCTest
 @testable import Vitesse
 
-class UserRepositoryTests: XCTestCase {
-    private var userRepository: UserRepository!
+class AuthRepositoryTests: XCTestCase {
+    private var authRepository: AuthRepository!
     private var apiService: APIService!
     private var keychainService: KeychainService!
 
@@ -23,11 +23,11 @@ class UserRepositoryTests: XCTestCase {
         // Create dependencies
         apiService = APIService(session: mockSession)
         keychainService = KeychainService()
-        userRepository = UserRepository(apiService: apiService, keychainService: keychainService)
+        authRepository = AuthRepository(apiService: apiService, keychainService: keychainService)
     }
 
     override func tearDown() {
-        userRepository = nil
+        authRepository = nil
         apiService = nil
         keychainService = nil
         MockURLProtocol.requestHandler = nil
@@ -61,7 +61,7 @@ class UserRepositoryTests: XCTestCase {
         let expectation = self.expectation(description: "AuthenticateUser should succeed")
 
         // WHEN authenticateUser is called
-        userRepository.authenticateUser(email: "john@example.com", password: "password123") { result in
+        authRepository.authenticateUser(email: "john@example.com", password: "password123") { result in
             // THEN the repository should return the correct data
             switch result {
             case .success(let authResponse):
@@ -100,7 +100,7 @@ class UserRepositoryTests: XCTestCase {
         let expectation = self.expectation(description: "AuthenticateAndPersistUser should succeed")
 
         // WHEN authenticateAndPersistUser is called
-        userRepository.authenticateAndPersistUser(email: "jane@example.com", password: "securepassword") { result in
+        authRepository.authenticateAndPersistUser(email: "jane@example.com", password: "securepassword") { result in
             // THEN the repository should return the correct data and persist it
             switch result {
             case .success(let authResponse):
@@ -138,7 +138,7 @@ class UserRepositoryTests: XCTestCase {
         let expectation = self.expectation(description: "RegisterNewUser should succeed")
 
         // WHEN registerNewUser is called
-        userRepository.registerNewUser(
+        authRepository.registerNewUser(
             email: "jane@example.com",
             password: "securepassword",
             firstName: "Jane",
@@ -176,7 +176,7 @@ class UserRepositoryTests: XCTestCase {
         let expectation = self.expectation(description: "AuthenticateUser should fail with invalid credentials")
 
         // WHEN authenticateUser is called
-        userRepository.authenticateUser(email: "john@example.com", password: "wrongpassword") { result in
+        authRepository.authenticateUser(email: "john@example.com", password: "wrongpassword") { result in
             // THEN the repository should return an error
             switch result {
             case .success:
@@ -197,7 +197,7 @@ class UserRepositoryTests: XCTestCase {
         let expectation = self.expectation(description: "RegisterNewUser should fail due to encoding error")
 
         // WHEN registerNewUser is called
-        userRepository.registerNewUser(
+        authRepository.registerNewUser(
             email: oversizedEmail,
             password: "password",
             firstName: "John",

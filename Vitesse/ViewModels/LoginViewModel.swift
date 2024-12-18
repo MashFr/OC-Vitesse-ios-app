@@ -9,11 +9,11 @@ import Combine
 
 class LoginViewModel: ObservableObject, LoginViewModelInput, LoginViewModelOutput {
 
-    private let userRepository: UserRepository
+    private let authRepository: AuthRepository
 
     // MARK: - Initializer
-    init(userRepository: UserRepository = UserRepository()) {
-        self.userRepository = userRepository
+    init(authRepository: AuthRepository = AuthRepository()) {
+        self.authRepository = authRepository
     }
 
     // MARK: - OUTPUT
@@ -57,7 +57,7 @@ class LoginViewModel: ObservableObject, LoginViewModelInput, LoginViewModelOutpu
             return
         }
 
-        userRepository.authenticateAndPersistUser(
+        authRepository.authenticateAndPersistUser(
             email: email,
             password: password
         ) { result in
@@ -67,7 +67,7 @@ class LoginViewModel: ObservableObject, LoginViewModelInput, LoginViewModelOutpu
                     self.isLoading = false
                     self.isLoginSuccessful = true
                 }
-            case .failure(let error):
+            case .failure:
                 DispatchQueue.main.async {
                     self.isLoading = false
                     self.isLoginSuccessful = false

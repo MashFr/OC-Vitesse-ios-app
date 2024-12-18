@@ -10,17 +10,17 @@ import XCTest
 final class LoginViewModelTests: XCTestCase {
 
     private var viewModel: LoginViewModel!
-    private var mockUserRepository: MockUserRepository!
+    private var mockAuthRepository: MockAuthRepository!
 
     override func setUp() {
         super.setUp()
-        mockUserRepository = MockUserRepository()
-        viewModel = LoginViewModel(userRepository: mockUserRepository)
+        mockAuthRepository = MockAuthRepository()
+        viewModel = LoginViewModel(authRepository: mockAuthRepository)
     }
 
     override func tearDown() {
         viewModel = nil
-        mockUserRepository = nil
+        mockAuthRepository = nil
         super.tearDown()
     }
 
@@ -48,7 +48,7 @@ final class LoginViewModelTests: XCTestCase {
         // GIVEN
         viewModel.updateEmail("")
         viewModel.updatePassword("")
-        mockUserRepository.loginSuccess = false
+        mockAuthRepository.loginSuccess = false
 
         let loginExpectation = expectation(description: "Login should Failed")
 
@@ -75,7 +75,7 @@ final class LoginViewModelTests: XCTestCase {
         // GIVEN
         viewModel.updateEmail("tony.stark@example.com")
         viewModel.updatePassword("password123")
-        mockUserRepository.loginSuccess = true
+        mockAuthRepository.loginSuccess = true
 
         let loginExpectation = expectation(description: "Login should succeed")
 
@@ -97,8 +97,8 @@ final class LoginViewModelTests: XCTestCase {
         // GIVEN
         viewModel.updateEmail("tony.stark@example.com")
         viewModel.updatePassword("password123")
-        mockUserRepository.loginSuccess = false
-        mockUserRepository.loginError = LoginError.invalidCredentials
+        mockAuthRepository.loginSuccess = false
+        mockAuthRepository.loginError = LoginError.invalidCredentials
 
         let loginExpectation = expectation(description: "Login should fail with invalid credentials")
 

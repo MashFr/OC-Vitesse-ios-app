@@ -35,8 +35,7 @@ struct CandidateDetailView: View {
                     .foregroundStyle(.blue)
                 Text("Phone:")
                 if let phone = viewModel.output.candidate.phone {
-                    Link(phone, destination: URL(string: phone)!)
-
+                    Link(phone, destination: URL(string: "tel:\(phone)")!)
                 } else {
                     Text("No Phone number available")
                         .foregroundStyle(.gray)
@@ -47,7 +46,10 @@ struct CandidateDetailView: View {
                 Image(systemName: "envelope")
                     .foregroundStyle(.blue)
                 Text("Email:")
-                Link(viewModel.output.candidate.email, destination: URL(string: viewModel.output.candidate.email)!)
+                Link(
+                    viewModel.output.candidate.email,
+                    destination: URL(string: "mailto:\(viewModel.output.candidate.email)")!
+                )
             }
 
             HStack {

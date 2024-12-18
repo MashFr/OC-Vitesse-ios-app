@@ -10,17 +10,17 @@ import XCTest
 final class RegisterViewModelTests: XCTestCase {
 
     private var viewModel: RegisterViewModel!
-    private var mockUserRepository: MockUserRepository!
+    private var mockAuthRepository: MockAuthRepository!
 
     override func setUp() {
         super.setUp()
-        mockUserRepository = MockUserRepository()
-        viewModel = RegisterViewModel(userRepository: mockUserRepository)
+        mockAuthRepository = MockAuthRepository()
+        viewModel = RegisterViewModel(authRepository: mockAuthRepository)
     }
 
     override func tearDown() {
         viewModel = nil
-        mockUserRepository = nil
+        mockAuthRepository = nil
         super.tearDown()
     }
 
@@ -107,7 +107,7 @@ final class RegisterViewModelTests: XCTestCase {
         viewModel.updateConfirmPassword("password123")
 
         let registerExpectation = expectation(description: "Register should complete successfully")
-        mockUserRepository.registerSuccess = true
+        mockAuthRepository.registerSuccess = true
 
         // WHEN
         viewModel.register()
@@ -183,8 +183,8 @@ final class RegisterViewModelTests: XCTestCase {
         viewModel.updateConfirmPassword("password123")
 
         let registerExpectation = expectation(description: "Register should fail with repository error")
-        mockUserRepository.registerSuccess = false
-        mockUserRepository.registerError = NSError(
+        mockAuthRepository.registerSuccess = false
+        mockAuthRepository.registerError = NSError(
             domain: "Test",
             code: -1,
             userInfo: [NSLocalizedDescriptionKey: "Registration failed"]
