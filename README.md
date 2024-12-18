@@ -50,9 +50,3 @@ We welcome contributions to this project! To get started:
 2. Create a new branch (`feature/your-feature-name`).  
 3. Commit your changes and push them to your fork.  
 4. Open a pull request for review.  
-
----
-
-## 📄 License  
-
-This project is licensed under the [MIT License](LICENSE).  
