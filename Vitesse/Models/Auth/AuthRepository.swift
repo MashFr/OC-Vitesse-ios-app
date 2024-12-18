@@ -1,12 +1,12 @@
 //
-//  UserRepository.swift
+//  AuthRepository.swift
 //  Vitesse
 //
 //  Created by Tony Stark on 04/12/2024.
 //
 import Foundation
 
-class UserRepository {
+class AuthRepository {
     private let apiService: APIService
     private let keychainService: KeychainService
 

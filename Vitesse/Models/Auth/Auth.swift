@@ -1,5 +1,5 @@
 //
-//  User.swift
+//  Auth.swift
 //  Vitesse
 //
 //  Created by Tony Stark on 27/11/2024.

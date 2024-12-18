@@ -1,5 +1,5 @@
 //
-//  MockUserRepository.swift
+//  MockAuthRepository.swift
 //  Vitesse
 //
 //  Created by Tony Stark on 16/12/2024.
@@ -7,7 +7,7 @@
 import XCTest
 @testable import Vitesse
 
-final class MockUserRepository: UserRepository {
+final class MockAuthRepository: AuthRepository {
     var registerSuccess: Bool = false
     var registerError: Error?
     var loginSuccess: Bool = false

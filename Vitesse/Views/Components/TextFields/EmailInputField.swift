@@ -18,7 +18,7 @@ struct EmailInputField: View, InputField {
             TextField(placeholder, text: text)
                 .modifier(InputFieldModifier())
                 .keyboardType(.emailAddress)
-                .textInputAutocapitalization(.none)
+                .textInputAutocapitalization(.never)
                 .textContentType(.emailAddress)
         }
     }

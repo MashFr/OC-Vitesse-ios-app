@@ -9,11 +9,11 @@ import Combine
 
 class RegisterViewModel: ObservableObject, RegisterViewModelInput, RegisterViewModelOutput {
 
-    private let userRepository: UserRepository
+    private let authRepository: AuthRepository
 
     // MARK: - Initializer
-    init(userRepository: UserRepository = UserRepository()) {
-        self.userRepository = userRepository
+    init(authRepository: AuthRepository = AuthRepository()) {
+        self.authRepository = authRepository
     }
 
     // MARK: - OUTPUT
@@ -78,7 +78,7 @@ class RegisterViewModel: ObservableObject, RegisterViewModelInput, RegisterViewM
             return
         }
 
-        userRepository.registerNewUser(
+        authRepository.registerNewUser(
             email: emailAddress,
             password: password,
             firstName: firstName,
