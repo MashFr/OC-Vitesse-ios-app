@@ -113,7 +113,7 @@ struct CandidateEditView: View {
         }
         .padding()
         .alert(
-            "Modification réussie",
+            "Successful modification",
             isPresented: Binding(
                 get: {
                     viewModel.output.showSuccessAlert
